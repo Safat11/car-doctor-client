@@ -12,7 +12,25 @@ const Bookings = () => {
         fetch(url)
             .then(res => res.json())
             .then(data => setBookings(data))
-    }, [])
+    }, []);
+
+    const handleDelete = id => {
+        const proceed = confirm('Are you sure you want to delete');
+        if (proceed) {
+            fetch(`http://localhost:5000/bookings/${id}`, {
+                method: 'DELETE'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.deletedCount > 0) {
+                        alert('deleted successful')
+                        const remaining = bookings.filter(booking => booking._id !== id)
+                        setBookings(remaining);
+                    }
+                })
+        }
+    }
 
     return (
         <div>
@@ -28,10 +46,11 @@ const Bookings = () => {
                                     <input type="checkbox" className="checkbox" />
                                 </label>
                             </th>
-                            <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th>
-                            <th></th>
+                            <th>Image</th>
+                            <th>Service</th>
+                            <th>Date</th>
+                            <th>Price</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,6 +58,7 @@ const Bookings = () => {
                             bookings.map(booking => <BookingRow
                                 key={booking._id}
                                 booking={booking}
+                                handleDelete={handleDelete}
                             ></BookingRow>)
                         }
 
